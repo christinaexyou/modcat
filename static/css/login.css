@@ -1,0 +1,94 @@
+.logo{   color: #0000ff;
+         font-family: Arial;
+         font-size: 24pt;
+        margin-top: 20px;
+}
+
+body{
+    margin: 10px;
+    color: #0000f0;
+    background:  #ffffff;
+    font-family:  verdana, geneva, arial, sans-serif;
+    font-size: 10pt;
+    height: 800px;
+}
+input.text{
+    background:#CCCCCC;
+    color: #000000;
+    font-family:  verdana, geneva, arial, sans-serif;
+    font-size: 10pt;
+}
+input.password{
+    background:#CCCCCC;
+    color: #000000;
+    font-family:  verdana, geneva, arial, sans-serif;
+    font-size: 10pt;
+}
+select.text{
+    background:#CCCCCC;
+    color: #000000;
+    font-family:  verdana, geneva, arial, sans-serif;
+    font-size: 10pt;
+}
+html{
+    height: 100%;
+    box-sizing: border-box;
+}
+*, *:before,
+*:after {
+    box-sizing: inherit;
+}
+/*body {
+    position: relative;
+    margin: 0;
+    padding-bottom: 6rem;
+    min-height: 100%;
+    font-family: sans-serif;
+}*/
+
+div.header{
+    position: fixed;
+    text-align: center;
+    top: 0px;
+    left: 0px;
+    width: 99%;
+    height: 150px;
+    z-index: 1;
+    opacity: 1;
+    background: #ffffff;
+
+}div.content{
+    margin: 5px auto;
+    padding-top: 150px;
+    width: 94%;
+    height: 800px;
+}
+div.footer{
+    height: 50px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    /*padding: 1rem;*/
+    background-color: #efefef;
+}
+.loginSubmitBtn{
+	background-color: #0f4af0;
+	color: #ffffff;
+}
+.loginErrorMsg{
+    color: red;
+}
+.loginDiv{
+    /*margin: 5px;*/
+    display: inline-block;
+    margin-left: 20px;
+    vertical-align: top;
+}
+.aboutDiv{
+    display: inline-block;
+    margin: 5px 5px 5px 20px;
+    vertical-align: middle;
+    height: 400px;
+    width: 500px;
+}
