@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="static/css/login.css"/>
+    <title>ModCat</title>
+</head>
+<body>
+    <div class="header">
+        <span class="logo">ModCat</span>
+    </div>
+    <div class="content">
+        <div class="loginDiv">
+            <h2> Please Log In</h2>
+            <form action="/loginValidation" method="post" name="mainForm" id="mainForm">
+                <input type="hidden" name="formIsLoaded" id="formIsLoaded" value="true"/>
+
+                <div id="loginTables">
+                    <table >
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Password</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" name="username" id="username" value class="text"/></td>
+                                <td><input type="password" id="password" name="password" value class="text"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table >
+                        <tr>
+                            <td><input type="submit" class="loginSubmitBtn" value="Login" id="loginBtn"/></td>
+                            <td><span id="loginError" class="loginErrorMsg">{{ message }}</span></td>
+
+                        </tr>
+                    </table>
+                </div>
+            </form>
+        </div>
+        <div class="aboutDiv">
+            {% include 'descriptions/shortAbout.html' %}
+        </div>
+    </div>
+    <div class="pageFooter">
+            {% include 'common/footer.html' %}
+    </div>
+<script src="static/js/login.js"></script>
+</body>
+
+</html>
