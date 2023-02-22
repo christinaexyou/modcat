@@ -1,5 +1,6 @@
 from dataobjects.user import User
 from dataobjects.project import Project
+from dataobjects.team import Team
 
 
 class DBObjectUtils:
@@ -60,3 +61,29 @@ class DBObjectUtils:
         :return: tuple of project column values
         """
         return (project.projectid, project.teamid, project.modelid, project.projectname)
+
+    @staticmethod
+    def team_utility(team_tuple):
+        """
+        Create a Team object from a tuple of column values
+        Team tuple is in the following order:
+        teamid, teamname, department, teamlead_userid
+        :param team_tuple A tuple of column values whose order is determined by the query to the team table.
+        :return: A Team object whose values are retrieved by the query to the team table.
+        """
+        teamid = team_tuple[0]
+        teamname = team_tuple[1]
+        department = team_tuple[2]
+        teamlead_userid = team_tuple[3]
+
+        team = Team(teamid, teamname, department, teamlead_userid)
+        return team
+
+    @staticmethod
+    def team_tuple_utility(team):
+        """
+        Create a tuple of team column values from a Team object
+        :param team: Team object
+        :return: tuple of team column values
+        """
+        return (team.teamid, team.teamname, team.department, team.teamlead_userid)
