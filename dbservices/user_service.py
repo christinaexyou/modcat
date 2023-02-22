@@ -1,8 +1,8 @@
 import psycopg2
-from dataobjects.user import User
+from dataobjects.dbobject_utils import DBObjectUtils
 from services.connection_pool_singleton import ConnectionPoolSingleton
 
-class User_service:
+class UserService:
     """This class provides static methods that give access to the USERS table."""
     # User table cols: teamid, projectid, userid, roleid, firstname, lastname, email, username, password
     GET_ALL_USERS = """select * from users order by lastname"""
@@ -23,13 +23,13 @@ class User_service:
         conn = pool.getconn()
         try:
             cursor = conn.cursor()
-            cursor.execute(User_service.GET_ALL_USERS)
+            cursor.execute(UserService.GET_ALL_USERS)
             all_rows = cursor.fetchall()
             user_list = []
             for row in all_rows:
                 # Call on utility function to create a User object from a tuple
                 # of column values.
-                user = User_service.user_utility(row)
+                user = UserService.user_utility(row)
                 user_list.append(user)
             return user_list
         except (Exception, psycopg2.DatabaseError) as err:
@@ -52,10 +52,10 @@ class User_service:
         try:
             cursor = conn.cursor()
             # The execute() method's second parameter is a tuple that contains the param value of the username
-            cursor.execute(User_service.GET_USER_BY_USERNAME, (username,))
+            cursor.execute(UserService.GET_USER_BY_USERNAME, (username,))
             one_user_tuple = cursor.fetchone()
             if one_user_tuple is not None:
-                user = User_service.user_utility(one_user_tuple)
+                user = DBObjectUtils.user_utility(one_user_tuple)
                 return user
             else:
                 return None
@@ -81,10 +81,10 @@ class User_service:
         try:
             cursor = conn.cursor()
             # The execute() method's second parameter is a tuple that contains the param value of the user id.
-            cursor.execute(User_service.GET_USER_BY_USER_ID, (userid,))
+            cursor.execute(UserService.GET_USER_BY_USER_ID, (userid,))
             one_user_tuple = cursor.fetchone()
             if one_user_tuple is not None:
-                user = User_service.user_utility(one_user_tuple)
+                user = DBObjectUtils.user_utility(one_user_tuple)
                 return user
             else:
                 return None
@@ -109,15 +109,15 @@ class User_service:
         pool = ConnectionPoolSingleton.getConnectionPool()
         conn = pool.getconn()
         try:
-            potential_user = User_service.get_user_by_userid(user.userid)
+            potential_user = UserService.get_user_by_userid(user.userid)
             cursor = conn.cursor()
-            user_as_tuple = User_service.user_tuple_utility(user)
+            user_as_tuple = DBObjectUtils.user_tuple_utility(user)
             if potential_user is None:
-                cursor.execute(User_service.INSERT_NEW_USER, user_as_tuple)
+                cursor.execute(UserService.INSERT_NEW_USER, user_as_tuple)
             else:
-                user_as_tuple = User_service.user_tuple_utility(user)
+                user_as_tuple = DBObjectUtils.user_tuple_utility(user)
                 query_values_tuple = user_as_tuple + (user.userid,)
-                cursor.execute(User_service.UPDATE_USER, query_values_tuple)
+                cursor.execute(UserService.UPDATE_USER, query_values_tuple)
             conn.commit()
             return True
         except(Exception, psycopg2.DatabaseError) as err:
@@ -140,7 +140,7 @@ class User_service:
         conn = pool.getconn()
         try:
             cursor = conn.cursor()
-            cursor.execute(User_service.DELETE_USER, (userid,))
+            cursor.execute(UserService.DELETE_USER, (userid,))
             conn.commit()
             return True
         except(Exception, psycopg2.DatabaseError) as err:
@@ -151,29 +151,3 @@ class User_service:
                 cursor.close()
             pool.putconn(conn)
 
-    @staticmethod
-    def user_utility(user_tuple):
-        """
-        Create a User object from a tuple of column values
-        User tuple is in the following order:
-        teamid, projectid, userid, roleid, firstname, lastname, email, username, password
-        :param user_tuple A tuple of column values whose order is determined by the query to the user table.
-        :return: A User object whose values are retrieved by the query to the user table.
-        """
-        teamid =        user_tuple[0]
-        projectid =     user_tuple[1]
-        userid =        user_tuple[2]
-        roleid =        user_tuple[3]
-        firstname =     user_tuple[4]
-        lastname =      user_tuple[5]
-        email =         user_tuple[6]
-        username =      user_tuple[7]
-        password =      user_tuple[8]
-        user = User(teamid, projectid, userid, roleid, firstname, lastname,
-                     email, username, password)
-        return user
-
-    @staticmethod
-    def user_tuple_utility(user):
-        return (user.teamid, user.projectid, user.userid, user.roleid, user.firstname, user.lastname,
-                    user.email, user.username, user.password)
