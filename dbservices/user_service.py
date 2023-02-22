@@ -17,7 +17,8 @@ class UserService:
     @staticmethod
     def get_all_users():
         """Get all users in the USERS table
-        :return: List of User objects ordered by users' last name."""
+        :return: List of User objects ordered by users' last name.  Return empty list if no users found.
+        """
 
         pool = ConnectionPoolSingleton.getConnectionPool()
         conn = pool.getconn()
