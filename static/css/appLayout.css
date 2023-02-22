@@ -1,0 +1,64 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    /*height: 100%;*/
+    margin_bottom: 0;
+}
+
+.logo{   color: #0000ff;
+         font-family: Arial;
+         font-size: 30pt;
+        margin-top: 20px;
+}
+div.header {
+    position: relative;
+    text-align: center;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100px;
+    z-index: 1;
+    opacity: 1;
+    background: lightblue;
+}
+div.content{
+    position: relative;
+    margin: 5px auto;
+    padding-top: 40px;
+    width: 94%;
+    height: auto;
+}
+/* Not used if no menu */
+div.horizMenu{
+    width: 75%;
+    height: 72px;
+    margin: 0;
+    float:left;
+}
+/*Container for both menu and user info*/
+.menuContainer{
+    width: 100%;
+    height: 50px;
+    margin: 0;
+    background: lightblue;
+}
+.userInfo{
+    width: 25%;
+    float: right;
+
+}
+.userInfo p{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.userInfo{
+    width: 250px;
+}
+div.footer{
+    height: 30px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    /*padding: 1rem;*/
+    background-color: lightblue;
+}
