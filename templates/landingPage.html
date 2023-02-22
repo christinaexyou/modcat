@@ -1,10 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="static/css/landingPage.css"/>
+{% extends 'layouts/app_layout.html' %}
 
-</head>
-<body>
-    Login landing page
-</body>
-</html>
+{% block content %}
+<h1>Project Dashboard</h1>
+<ul>
+    <li><a href="/projectPage?projectid='1'">Proj 1</a></li>
+        <ul>
+            <li>Model1</li>
+            <li>Model2</li>
+        </ul>
+    </li>
+    <p class="pspace"></p>
+    <li>Proj 2</li>
+        <ul>
+            <li>Model3</li>
+            <li>Model4</li>
+        </ul>
+    </li>
+
+</ul>
+{% endblock %}
