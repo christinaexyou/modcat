@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="static/css/appLayout.css"/>
+    <link rel="stylesheet" type="text/css" href="static/css/menu.css"/>
+    <!--<link rel="stylesheet" type="text/css" href="static/css/landingPage.css"/>-->
+    <title>Title</title>
+
+</head>
+<body>
+    <div class="header">
+        <span class="logo">ModCat</span>
+    </div>
+    <div class="menuContainer">
+            <div class="horizMenu">
+                {% include 'menu/modcatMenu.html' %}
+            </div>
+            <div class="userInfo">
+                <p>Logged in as: {{ session['user'].username }}</p>
+                <p><a href="/log_out">Log out</a></p>
+            </div>
+    </div>
+    <div class="content">
+        {% block content %} {% endblock %}
+    </div>
+    <div class="footer">
+        Some Footer
+    </div>
+
+</body>
+</html>
