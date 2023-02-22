@@ -57,7 +57,8 @@ div.header{
     opacity: 1;
     background: #ffffff;
 
-}div.content{
+}
+div.content{
     margin: 5px auto;
     padding-top: 150px;
     width: 94%;
