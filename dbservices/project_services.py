@@ -1,5 +1,5 @@
 import psycopg2
-from dataobjects.project import Project
+
 from dataobjects.dbobject_utils import DBObjectUtils
 from services.connection_pool_singleton import ConnectionPoolSingleton
 class ProjectService:
