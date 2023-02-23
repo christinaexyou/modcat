@@ -9,7 +9,7 @@ class UserService:
     GET_USER_BY_USERNAME = """select * from users where username like %s"""
     GET_USER_BY_USER_ID = """select * from users where userid=%s"""
     INSERT_NEW_USER = """insert into users (teamid, projectid, userid, roleid, firstname, lastname, email, username, password)\
-                            values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+                            values (%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
     UPDATE_USER = """update users set teamid=%s, projectid=%s, userid=%s, roleid=%s, firstname=%s, lastname=%s,\
                         email=%s, username=%s, password=%s where userid=%s"""
     DELETE_USER = """delete from users where userid=%s"""
