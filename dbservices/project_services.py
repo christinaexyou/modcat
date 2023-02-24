@@ -7,6 +7,7 @@ class ProjectService:
     # User table cols: projectid, teamid, modelid, projectname
 
     GET_PROJECT_BY_ID = """Select * from projects where projectid=%s"""
+    GET_ALL_PROJECTS = """select * from projects"""
 
     @staticmethod
     def get_project_by_projectid(projectid):
