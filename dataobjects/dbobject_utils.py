@@ -1,6 +1,8 @@
 from dataobjects.user import User
 from dataobjects.project import Project
 from dataobjects.team import Team
+from dataobjects.models_users import ModelsUser
+from dataobjects.teams_projects import TeamsProjects
 
 
 class DBObjectUtils:
@@ -87,3 +89,82 @@ class DBObjectUtils:
         :return: tuple of team column values
         """
         return (team.teamid, team.teamname, team.department, team.teamlead_userid)
+
+    @staticmethod
+    def models_users_utility(modelsusers_tuple):
+        """
+            Create a MODELUSER object from a tuple of column values
+            MODELSUSERS tuple is in the following order:
+            modelsusersid, modelid, userid, timestamp
+            :param modelsusers_tuple A tuple of column values whose order is determined by the query to the modelsusers table.
+            :return: A ModelUser object whose values are retrieved by the query to the modelsusers table.
+            """
+        modelsuserid = modelsusers_tuple[0]
+        modelid = modelsusers_tuple[1]
+        userid = modelsusers_tuple[2]
+        timestamp = modelsusers_tuple[3]
+
+        modelsuser = ModelsUser(modelsuserid, modelid, userid, timestamp)
+        return modelsuser
+
+    @staticmethod
+    def models_users_tuple_utility(modelsusers):
+        """
+        Create a tuple of MODELUSERS column values for the given MODELSUSER object
+        :param project: MODELSUSER object
+        :return: tuple of modelsusers column values
+        """
+        return (modelsusers.modelsusersid, modelsusers.modelid, modelsusers.userid, modelsusers.timestamp)
+
+    @staticmethod
+    def projects_models_utility(projects_models_tuple):
+        """
+            Create a ProjectsModels object from a tuple of column values
+            projects_models_tuple is in the following order:
+            projectsmodelsid, projectid, modelid, timestamp
+            :param projects_models_tuple A tuple of column values whose order is determined by the query to the PROJECTSMODELS table.
+            :return: A ProjectsModels object whose values are retrieved by the query to the PROJECTSMODELS table.
+            """
+        projects_modelsid = projects_models_tuple[0]
+        projectid = projects_models_tuple[1]
+        modelid = projects_models_tuple[2]
+        timestamp = projects_models_tuple[3]
+
+        modelsuser = ModelsUser(projects_modelsid, projectid, modelid, timestamp)
+        return modelsuser
+
+    @staticmethod
+    def projects_models_tuple_utility(projectsmodels):
+        """
+        Create a tuple of PROJECTSMODELS column values for the given ProjectsModels object
+        :param projectsmodels: ProjectsModels object
+        :return: tuple of PROJECTSMODELS column values
+        """
+        return (projectsmodels.projectsmodelsid, projectsmodels.projectid, projectsmodels.userid, projectsmodels.timestamp)
+
+    @staticmethod
+    def teams_projects_utility(teams_project_tuple):
+        """
+            Create a TeamsProject object from a tuple of column values
+            teams_projects_tuple is in the following order:
+            teamsprojectsid, teamid, projectid, timestamp
+            :param projects_models_tuple A tuple of column values whose order is determined by the query to the PROJECTSMODELS table.
+            :return: A ProjectsModels object whose values are retrieved by the query to the PROJECTSMODELS table.
+            """
+        teamsprojectid = teams_project_tuple[0]
+        teamid = teams_project_tuple[1]
+        projectid = teams_project_tuple[2]
+        timestamp = teams_project_tuple[3]
+
+        teamsprojects = TeamsProjects(teamsprojectid, teamid, projectid, timestamp)
+        return teamsprojects
+
+
+    @staticmethod
+    def teams_projects_tuple_utility(teamsprojects):
+        """
+        Create a tuple of teamsprojects column values for the given TeamsProjects object
+        :param projectsmodels: TeamsProjects object
+        :return: tuple of teamsprojects column values
+        """
+        return (teamsprojects.teamsprojectsid, teamsprojects.teamid, teamsprojects.projectid, teamsprojects.timestamp)
