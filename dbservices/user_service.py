@@ -4,14 +4,17 @@ from services.connection_pool_singleton import ConnectionPoolSingleton
 
 class UserService:
     """This class provides static methods that give access to the USERS table."""
-    # User table cols: teamid, projectid, userid, roleid, firstname, lastname, email, username, password
-    GET_ALL_USERS = """select * from users order by lastname"""
-    GET_USER_BY_USERNAME = """select * from users where username like %s"""
-    GET_USER_BY_USER_ID = """select * from users where userid=%s"""
-    INSERT_NEW_USER = """insert into users (teamid, projectid, userid, roleid, firstname, lastname, email, username, password)\
+    # User table cols: teamid, projectid, userid, roleid, firstname, lastname, email, username, password, active
+    GET_ALL_USERS = """select teamid, projectid, userid, roleid, firstname, lastname,email,username,password, active 
+                                    from users order by lastname"""
+    GET_USER_BY_USERNAME = """select teamid, projectid, userid, roleid, firstname, lastname,email,username,password, active
+                                    from users where username like %s"""
+    GET_USER_BY_USER_ID = """select teamid, projectid, userid, roleid, firstname, lastname,email,username,password, active
+                                    from users where userid=%s"""
+    INSERT_NEW_USER = """insert into users (teamid, projectid, roleid, firstname, lastname, email, username, password, active)\
                             values (%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-    UPDATE_USER = """update users set teamid=%s, projectid=%s, userid=%s, roleid=%s, firstname=%s, lastname=%s,\
-                        email=%s, username=%s, password=%s where userid=%s"""
+    UPDATE_USER = """update users set teamid=%s, projectid=%s, roleid=%s, firstname=%s, lastname=%s,\
+                        email=%s, username=%s, password=%s, active=%s where userid=%s"""
     DELETE_USER = """delete from users where userid=%s"""
 
     @staticmethod
@@ -30,7 +33,7 @@ class UserService:
             for row in all_rows:
                 # Call on utility function to create a User object from a tuple
                 # of column values.
-                user = UserService.user_utility(row)
+                user = DBObjectUtils.user_utility(row)
                 user_list.append(user)
             return user_list
         except (Exception, psycopg2.DatabaseError) as err:
@@ -110,19 +113,20 @@ class UserService:
         pool = ConnectionPoolSingleton.getConnectionPool()
         conn = pool.getconn()
         try:
-            potential_user = UserService.get_user_by_userid(user.userid)
+            potential_user = UserService.get_user_by_username(user.username)
             cursor = conn.cursor()
             user_as_tuple = DBObjectUtils.user_tuple_utility(user)
+            # Drop last column in tuple since it is userid
+            user_as_tuple = user_as_tuple[:len(user_as_tuple) - 1]
             if potential_user is None:
                 cursor.execute(UserService.INSERT_NEW_USER, user_as_tuple)
             else:
                 user_as_tuple = DBObjectUtils.user_tuple_utility(user)
-                query_values_tuple = user_as_tuple + (user.userid,)
-                cursor.execute(UserService.UPDATE_USER, query_values_tuple)
+                cursor.execute(UserService.UPDATE_USER, user_as_tuple)
             conn.commit()
             return True
         except(Exception, psycopg2.DatabaseError) as err:
-            print(err)
+            print("Error in create_or_update_user(): {}".format(err))
             return False
         finally:
             if cursor is not None:
