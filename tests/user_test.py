@@ -1,24 +1,24 @@
 from dataobjects.user import User
-from dbservices.user_service import User_service
+from dbservices.user_service import UserService
 import psycopg2
 
 # Get All Users
 try:
-    user_list = User_service.get_all_users()
+    user_list = UserService.get_all_users()
     print("All Users")
     if user_list is not None:
         for user in user_list:
             print("TeamID: {}\tProjectID: {}\tUserID: {}\tRoleID: {}\tFirstname: {}\tLastname: {} " \
-                  "Email: {}\tUsername: {}\tPassword: {}".format(user.teamid, user.projectid, user.userid,
+                  "Email: {}\tUsername: {}\tPassword: {}\tActive: {}".format(user.teamid, user.projectid, user.userid,
                                                                  user.roleid, user.firstname, user.lastname, user.email,
-                                                                 user.username, user.password))
+                                                                 user.username, user.password, user.active))
 except (Exception, psycopg2.DatabaseError) as err:
     print(err)
 
 # Get only 'user2 by username'
 try:
-    print("Get user2")
-    user = User_service.get_user_by_username('user2')
+    print("Get annjones")
+    user = UserService.get_user_by_username('annjones')
     if user is not None:
         print("TeamID: {}\tProjectID: {}\tUserID: {}\tRoleID: {}\tFirstname: {}\tLastname: {} " \
               "Email: {}\tUsername: {}\tPassword: {}".format(user.teamid, user.projectid, user.userid,
@@ -29,8 +29,8 @@ except(Exception, psycopg2.DatabaseError) as err:
 
 # Get only 'user3 by userid'
 try:
-    print("Get user with id = 220")
-    user = User_service.get_user_by_userid(220)
+    print("Get user with id = 3")
+    user = UserService.get_user_by_userid(3)
     if user is not None:
         print("TeamID: {}\tProjectID: {}\tUserID: {}\tRoleID: {}\tFirstname: {}\tLastname: {} " \
               "Email: {}\tUsername: {}\tPassword: {}".format(user.teamid, user.projectid, user.userid,
@@ -42,7 +42,7 @@ except(Exception, psycopg2.DatabaseError) as err:
 # Get user that does not exist
 try:
     print("Get user with id = 909090")
-    user = User_service.get_user_by_userid(909090)
+    user = UserService.get_user_by_userid(909090)
     if user is not None:
         print("TeamID: {}\tProjectID: {}\tUserID: {}\tRoleID: {}\tFirstname: {}\tLastname: {} " \
             "Email: {}\tUsername: {}\tPassword: {}".format(user.teamid, user.projectid, user.userid,
@@ -55,8 +55,10 @@ except(Exception, psycopg2.DatabaseError) as err:
 
 # Create new user
 try:
-    new_user = User(2, 4, 1110909, 20, 'John', 'Baxter', 'baxterj@gmail.com', 'baxterj', 'baxterpass')
-    success_flag = User_service.create_or_update_user(new_user)
+    print("Creating new user, John Baxter")
+    # teamid, projectid, roleid, firstname, lastname, email, username, password, active
+    new_user = User(200, 200, 20, 'John', 'Baxter', 'baxterj@gmail.com', 'baxterj', 'baxterpass', True)
+    success_flag = UserService.create_or_update_user(new_user)
     if success_flag:
         print("Created new user")
     else:
@@ -64,10 +66,11 @@ try:
 except(Exception, psycopg2.DatabaseError) as err:
     print(err)
 
-# Update existing user
+# Update existing user's email
 try:
-    existing_user = User(2, 4, 1110909, 20, 'John', 'Baxter', 'baxternewemail@gmail.com', 'baxterj', 'baxterpass')
-    success_flag = User_service.create_or_update_user(existing_user)
+    print("Updating ann jones email")
+    existing_user = User(100, 100, 20, 'ann', 'jones', 'jonesa@gmail.com', 'annjones', 'annjones', True, 1)
+    success_flag = UserService.create_or_update_user(existing_user)
     if success_flag:
         print("Updated existing user")
     else:
@@ -77,10 +80,12 @@ except(Exception, psycopg2.DatabaseError) as err:
 
 # Delete user
 try:
-    success_flag = User_service.delete_user(1110909)
+    user_to_delete = UserService.get_user_by_username('baxterj')
+    print("Attempting to delete user with username 'baxterj' with userid={}".format(user_to_delete.userid))
+    success_flag = UserService.delete_user(user_to_delete.userid)
     if success_flag:
-        print("Deleted user with id {}".format(1110909))
+        print("Deleted user with id {}".format(user_to_delete.userid))
     else:
-        print("Delete failed for userid {}".format(1110909))
+        print("Delete failed for username {}".format('baxterj'))
 except(Exception, psycopg2.DatabaseError) as err:
     print(err)
