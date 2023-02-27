@@ -11,7 +11,7 @@ class DBObjectUtils:
         """
         Create a User object from a tuple of column values
         User tuple is in the following order:
-        teamid, projectid, userid, roleid, firstname, lastname, email, username, password
+        teamid, projectid, userid, roleid, firstname, lastname,email,username,password, active
         :param user_tuple A tuple of column values whose order is determined by the query to the user table.
         :return: A User object whose values are retrieved by the query to the user table.
         """
@@ -24,8 +24,11 @@ class DBObjectUtils:
         email = user_tuple[6]
         username = user_tuple[7]
         password = user_tuple[8]
-        user = User(teamid, projectid, userid, roleid, firstname, lastname,
-                    email, username, password)
+        active = user_tuple[9]
+        # Order in constructor: teamid, projectid, roleid, firstname, lastname, email,
+        #                  username, password, active, userid=None
+        user = User(teamid, projectid, roleid, firstname, lastname,
+                    email, username, password, active, userid)
         return user
 
     @staticmethod
@@ -35,8 +38,9 @@ class DBObjectUtils:
         :param user: User object
         :return: tuple of user column values
         """
-        return (user.teamid, user.projectid, user.userid, user.roleid, user.firstname, user.lastname,
-                user.email, user.username, user.password)
+        # Cols:  teamid, projectid, userid, roleid, firstname, lastname,email,username,password, active
+        return (user.teamid, user.projectid, user.roleid, user.firstname, user.lastname,
+                user.email, user.username, user.password, user.active, user.userid)
 
     @staticmethod
     def project_utility(project_tuple):
