@@ -12,6 +12,11 @@ class ProjectsModelsService:
                                 projectsmodels where models.modelid = projectsmodels.modelid and
                                 projects.projectid = projectsmodels.projectid and projects.projectid 
                                 in (select projectid from teamsprojects where teamid in {teamids})"""
+    INSERT_NEW_PROJECTS_MODELS  = """insert into projectsmodels (projectid, modelid, timestamp) \
+                                         values (%s, %s, %s)"""
+    UPDATE_PROJECTS_MODELS = """"update projectsmodels set projectid =%s, modelid=%s, timestamp=%s \
+                                    projects_modelsid=%s"""
+    DELETE_PROJECTS_MODELS = """delete from projectsmodels where projects_modelsid=%s"""
 
     @staticmethod
     def get_all_projects_models():
@@ -91,6 +96,59 @@ class ProjectsModelsService:
         except (Exception, psycopg2.DatabaseError) as err:
             print(err)
 
+        finally:
+            if cursor is not None:
+                cursor.close()
+            pool.putconn(conn)
+
+    @staticmethod
+    def create_or_update_projects_models(projectsmodels):
+        """"
+        Creates or updates a project. If the project exists (by projectid) for a given modelid in PROJECTSMODELS table, 
+        then update with data contained in the given project and model. If the project does not exist (by projectid) 
+        then a new row is created in PROJECTSMODELS table with the contained data in the given project and model.
+        """
+        pool = ConnectionPoolSingleton.getConnectionPool()
+        conn = pool.getconn()
+        try:
+            potential_project_model = ProjectsModelsService.get_projects_by_modelid(projectsmodels.modelsid)
+            cursor = conn.cursor()
+            project_model_as_tuple = DBObjectUtils.projects_models_tuple_utility(projectsmodels)
+            # Drop first and last column in tuple since they are projectsmodelsid and timestamp
+            project_model_as_tuple = project_model_as_tuple[1: len(project_model_as_tuple) - 1]
+            if potential_project_model is None:
+                cursor.execute(ProjectsModelsService.INSERT_NEW_PROJECTS_MODELS, project_model_as_tuple)
+            else:
+                project_model_as_tuple = DBObjectUtils.projects_models_tuple_utility(projectsmodels)
+                cursor.execute(ProjectsModelsService.UPDATE_PROJECTS_MODELS, project_model_as_tuple)
+            conn.commit()
+            return True
+        except(Exception, psycopg2.DatabaseError) as err:
+            print("Error in create_or_update_projects_models(): {}".format(err))
+            return False
+        finally:
+            if cursor is not None:
+                cursor.close()
+            pool.putconn(conn)
+
+    @staticmethod
+    def delete_projects_models(projectsmodelsid):
+        """
+        DELETE projectmodel from PROJECTSMODELS table given projectsmodelsid
+        CAUTION:  THIS METHOD SHOULD NOT BE USED EXCEPT FOR TESTING.  THERE IS NO USE CASE FOR DELETION OF A PROJECTMODEL
+        :param userid: Id of projectmodel to delete
+        :return: True if deletion was successful, False otherwise
+        """
+        pool = ConnectionPoolSingleton.getConnectionPool()
+        conn = pool.getconn()
+        try:
+            cursor = conn.cursor
+            cursor.execute(ProjectsModelsService.DELETE_PROJECTS_MODELS, (projectsmodelsid,))
+            conn.commit()
+            return True
+        except (Exception, psycopg2.DatabaseError) as err:
+            print(err)
+            return False
         finally:
             if cursor is not None:
                 cursor.close()

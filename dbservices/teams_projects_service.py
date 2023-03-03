@@ -17,6 +17,11 @@ class TeamsProjectsService:
                                         projects.projectid = teamsprojects.projectid and projects.projectid 
                                         in (select projectid from teamsprojects where teamid in {teamids}) 
                                     order by teamsprojects.teamid;"""
+    INSERT_NEW_TEAMS_PROJECTS = """insert into teamsprojects (teamid, projectid, timestamp) values \
+                                        (%s, %s, %s)"""
+    UPDATE_TEAMS_PROJECTS = """update teamsprojects set teamid=%s, projectid=%s, timestamp=%s where \
+                                        where teamsprojects=%s """
+    DELETE_TEAMS_PROJECTS = """delete from teamsprojects where teamsprojectsid=%s"""
 
 
     @staticmethod
@@ -107,3 +112,59 @@ class TeamsProjectsService:
             if cursor is not None:
                 cursor.close()
             pool.putconn(conn)
+
+    @staticmethod 
+    def create_or_update_teams_projects(teamsprojects):
+        """"
+        Creates or updates a project for a given team. If the project exists (by projectid) for a given teamid in TEAMSPROJECTS table, 
+        then update with data contained in the given team and project. If the project does not exist (by projectid) 
+        then a new row is created in TEAMSPROJECTS table with the contained data in the given team and prohect.
+        """
+        pool = ConnectionPoolSingleton.getConnectionPool()
+        conn = pool.getconn()
+        try:
+            potential_team_project = TeamsProjectsService.get_project_ids_by_team(teamsprojects.teamid)
+            cursor = conn.cursor()
+            teamsprojects_as_tuple = DBObjectUtils.teams_projects_tuple_utility(teamsprojects)
+            # Drop first column and columns since they are teamsprojectid and timestamp
+            teamsprojects_as_tuple = teamsprojects_as_tuple[1:len(teamsprojects_as_tuple) - 1]
+            if potential_team_project is None:
+                cursor.execute(TeamsProjectsService.INSERT_NEW_TEAMS_PROJECTS, teamsprojects_as_tuple)
+            else:
+                teamsprojects_as_tuple = DBObjectUtils.teams_projects_tuple_utility(teamsprojects)
+                cursor.execute(TeamsProjectsService.UPDATE_TEAMS_PROJECTS, teamsprojects_as_tuple)
+            conn.commit()
+            return True 
+        except (Exception, psycopg2.DatabaseError) as err:
+            print("Error in create_or_update_teams_projects(): {}".format(err))
+            return False 
+        finally:
+            if cursor is not None:
+                cursor.close()
+            pool.putconn(conn)
+
+    def delete_teams_projects(teamsprojectsid):
+        """
+        Delete user from USER table given userid
+        CAUTION:  THIS METHOD SHOULD NOT BE USED EXCEPT FOR TESTING.  THERE IS NO USE CASE FOR DELETION OF A USER
+        :param userid: Id of user to delete
+        :return: True if deletion was successful, False otherwise
+        """
+        pool = ConnectionPoolSingleton.getConnectionPool()
+        conn = pool.getconn()
+        try:
+            cursor = conn.cursor()
+            cursor.execute(TeamsProjectsService.DELETE_TEAMS_PROJECTS, (teamsprojectsid,))
+            conn.commit()
+            return True
+        except(Exception, psycopg2.DatabaseError) as err:
+            print(err)
+            return False
+        finally: 
+            if cursor is not None:
+                cursor.close()
+            pool.putconn(conn)
+
+
+
+            
